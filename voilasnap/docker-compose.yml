@@ -1,0 +1,25 @@
+version: "3.3"
+services:
+  voilasnap-api:
+    container_name: voilasnap-api
+    restart: always
+    networks:
+      - proxy
+    build:
+      context: ./voilasnap-api
+      dockerfile: "Dockerfile"
+    command: ["yarn", "start"]
+    expose:
+      - 3000
+    env_file:
+      - ./.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.voilasnap-api.rule=Host(`voilasnap.cf`)"
+      - "traefik.http.routers.voilasnap-api.entrypoints=websecure"
+      - "traefik.http.routers.voilasnap-api.tls.certresolver=myhttpchallenge"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true

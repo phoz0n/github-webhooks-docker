@@ -1,0 +1,25 @@
+version: "3.3"
+
+services:
+  github-webhooks:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: github-webhooks
+    restart: always
+    networks:
+      - proxy
+    expose:
+      - 3001
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.github-webhooks.rule=Host(`webhooks.hehe.ovh`)"
+      - "traefik.http.routers.github-webhooks.entrypoints=websecure"
+      - "traefik.http.routers.github-webhooks.tls.certresolver=myhttpchallenge"
+      - "traefik.docker.network=proxy"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+networks:
+  proxy:
+    external: true
